@@ -27,7 +27,7 @@ function BottomTabs() {
             <MaterialIcons
               name="chat-bubble-outline"
               size={30}
-              color={focused ? "#000" : "#989898"}
+              color={focused ? "white" : "grey"}
             />
           ),
         }}
@@ -42,7 +42,7 @@ function BottomTabs() {
             <MaterialIcons
               name="person-outline"
               size={30}
-              color={focused ? "#000" : "#989898"}
+              color={focused ? "white" : "grey"}
             />
           ),
         }}
