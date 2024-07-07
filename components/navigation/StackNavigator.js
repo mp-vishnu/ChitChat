@@ -87,12 +87,29 @@ function MainStack() {
 
 const StackNavigator = () => {
   return (
-    <NavigationContainer>
-      <MainStack />
+    <NavigationContainer >
+      {/* <MainStack /> */}
+      <AuthStack/>
     </NavigationContainer>
   );
 };
 
 export default StackNavigator;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f0f0f0',
+  },
+  containerIOS: {
+    paddingTop: 50, // Adjust as needed
+  },
+  text: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+});
+

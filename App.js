@@ -26,6 +26,7 @@ import {
 import Icon from "react-native-vector-icons/MaterialIcons";
 import StackNavigator from './components/navigation/StackNavigator';
 
+import Device from './components/Device';
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -36,7 +37,7 @@ function App() {
   return (
 
      <StackNavigator/>
- 
+//  <Device/>
   );
 }
 
