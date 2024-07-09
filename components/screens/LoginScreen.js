@@ -1,29 +1,47 @@
-import { KeyboardAvoidingView, Pressable, SafeAreaView, StyleSheet, Text, View, Image, TextInput } from 'react-native';
-import React, { useState } from 'react';
+import { KeyboardAvoidingView, Pressable, SafeAreaView, StyleSheet, Text, View, Image, TextInput, Alert } from 'react-native';
+import React, { useState,useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { useSelector } from 'react-redux';
 import {selectName } from '../../redux/user/userSlice';
-
+import { loginUserAsync } from '../../redux/auth/authSlice';
+import { useDispatch , useSelector} from 'react-redux';
+import { selectLoggedInUser,selectUserId } from '../../redux/auth/authSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = () => {
-  const name = useSelector(selectName);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const dispatch = useDispatch();
+   const token = useSelector(selectLoggedInUser);
+  //const token = null;
+  const userId=useSelector(selectUserId);
   const navigation = useNavigation();
- 
-  // const handleLogin = () => {
-  //   const user = {
-  //     email: email,
-  //     password: password,
-  //   };
-
-  //   axios.post('http://localhost:4000/login', user).then(response => {
-  //     const token = response.data.token;
-  //     console.log("token", token);
-  //     AsyncStorage.setItem('authToken', token);
-  //     setToken(token);
-  //   });
-  // };
+  const [user, setUser] = useState({
+    email: "",
+    password: ""
+  });
+  useEffect(() => {
+    if (token) {
+      navigation.replace('MainStack');
+    }
+  }, [token, navigation, userId]);
+  const handleChange = (name, value) => {
+    setUser({ ...user, [name]: value });
+  };
+   const handleLogin = () => {
+    const {  email, password } = user;
+    if (!email || !password ) {
+      Alert.alert('Please fill in all fields');
+      return;
+    } else {
+      dispatch(
+        loginUserAsync({
+          email,
+          password,
+        }))}
+      // if(token)
+      // {  AsyncStorage.setItem('authToken', token);}
+        // const abc=useSelector(selectLoggedInUser)
+        // Alert.alert(
+        //   'Registration Successful')
+  };
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: 'white' }}>
@@ -31,7 +49,7 @@ const LoginScreen = () => {
         <KeyboardAvoidingView>
           <View style={{ marginTop: 80, alignItems: 'center', justifyContent: "center" }}>
             <Text>
-              Login to your account
+              Login to your account {token} {userId}
             </Text>
           </View>
           <View>
@@ -41,14 +59,13 @@ const LoginScreen = () => {
               </Text>
               <View>
                 <TextInput
-                  value={email}
-                  onChangeText={setEmail}
+                  value={user.email}
+                  onChangeText={(text) => handleChange('email', text)}
                   placeholderTextColor="#BEBEBE"
                   style={{
                     width: 320, marginTop: 15, borderBottomColor: "#BEBEBE",
                     borderBottomWidth: 1, paddingBottom: 10,
                     fontFamily: "GeezaPro-Bold",
-                    fontSize: email ? 15 : 15
                   }}
                   placeholder="Enter your email"
                 />
@@ -60,25 +77,24 @@ const LoginScreen = () => {
               </Text>
               <View>
                 <TextInput
-                  value={password}
-                  onChangeText={setPassword}
+                  value={user.password}
+                  onChangeText={(text) => handleChange('password', text)}
                   placeholderTextColor="#BEBEBE"
                   secureTextEntry
                   style={{
                     width: 320, marginTop: 15, borderBottomColor: "#BEBEBE",
                     borderBottomWidth: 1, paddingBottom: 10,
                     fontFamily: "GeezaPro-Bold",
-                    fontSize: password ? 15 : 15
                   }}
                   placeholder="Enter your password"
                 />
               </View>
             </View>
             <Pressable
-              // onPress={handleLogin}
+               onPress={handleLogin}
               style={{
                 width: 200,
-                backgroundColor: '#4A55A2',
+                backgroundColor: '#5B84B1',
                 padding: 15,
                 marginTop: 50,
                 marginLeft: 'auto',
@@ -92,7 +108,7 @@ const LoginScreen = () => {
                   fontWeight: 'bold',
                   textAlign: 'center',
                 }}>
-                Login{name}
+                Login
               </Text>
             </Pressable>
             <Pressable onPress={() => navigation.navigate("Register")}>
@@ -115,9 +131,7 @@ const LoginScreen = () => {
             }}>
             <Image
               style={{ width: 140, height: 170 }}
-              source={{
-                uri: 'https://signal.org/assets/images/features/Media.png',
-              }}
+              source={require('../img/abc.jpg')}
             />
           </View>
         </KeyboardAvoidingView>

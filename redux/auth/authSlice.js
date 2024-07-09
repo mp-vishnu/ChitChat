@@ -1,17 +1,19 @@
 // src/user/userSlice.js
 
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { createUser, loginUser } from './userApi';
-
+import { createUser, loginUser } from './authApi';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
+// import {jwtDecode} from 'jwt-decode';
+// import 'core-js/stable/atob';
 const initialState = {
-  loggedInUserToken: null, // this should only contain user identity => 'id'/'role'
+  loggedInUserToken: null, 
+  userId:null,
   status: 'idle',
   error: null,
-  name:"try"
 };
 
 export const createUserAsync = createAsyncThunk(
-  'user/createUser',
+  'auth/createUser',
   async (userData, { rejectWithValue }) => {
     try {
       const response = await createUser(userData);
@@ -23,10 +25,12 @@ export const createUserAsync = createAsyncThunk(
 );
 
 export const loginUserAsync = createAsyncThunk(
-  'user/loginUser',
+  'auth/loginUser',
   async (loginInfo, { rejectWithValue }) => {
     try {
       const response = await loginUser(loginInfo);
+      console.log("response login <><><> ",response),"   <><><>";
+      
       return response.data;
     } catch (error) {
       return rejectWithValue(error);
@@ -35,9 +39,15 @@ export const loginUserAsync = createAsyncThunk(
 );
 
 const userSlice = createSlice({
-  name: 'user',
+  name: 'auth',
   initialState,
-  reducers: {},
+  reducers: {
+    logout: (state) => {
+      state.loggedInUserToken = null;
+      state.userId=null;
+     // AsyncStorage.removeItem('authToken'); // Clear token from AsyncStorage
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(createUserAsync.pending, (state) => {
@@ -56,7 +66,8 @@ const userSlice = createSlice({
       })
       .addCase(loginUserAsync.fulfilled, (state, action) => {
         state.status = 'idle';
-        state.loggedInUserToken = action.payload;
+        state.loggedInUserToken = action.payload.authtoken;
+        state.userId = action.payload.id;
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.status = 'idle';
@@ -65,7 +76,8 @@ const userSlice = createSlice({
   },
 });
 
-export const selectLoggedInUser = (state) => state.user.loggedInUserToken;
-export const selectError = (state) => state.user.error;
-export const selectName = (state) => state.user.name;
+export const selectLoggedInUser = (state) => state.auth.loggedInUserToken;
+export const selectUserId = (state) => state.auth.userId;
+export const selectError = (state) => state.auth.error;
+export const { logout } = userSlice.actions;
 export default userSlice.reducer;
