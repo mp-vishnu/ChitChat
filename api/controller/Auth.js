@@ -27,7 +27,6 @@ exports.loginUser = async (req, res) => {
     const {email, password} = req.body;
 
     const user = await User.findOne({email});
-    console.log('user found <><><> ', user, ' <><><> ');
     if (!user) {
       return res.status(401).json({message: 'Invalid email'});
     }
@@ -39,7 +38,6 @@ exports.loginUser = async (req, res) => {
     const secretKey = crypto.randomBytes(32).toString('hex');
 
     const token = jwt.sign({userId: user._id}, secretKey);
-    console.log('token found <><><> ', token);
     res.status(200).json({authtoken: token, id: user._id});
   } catch (error) {
     console.log('Error logging in', error);

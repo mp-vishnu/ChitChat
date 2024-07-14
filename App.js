@@ -23,10 +23,10 @@ import {
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
 
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Icon from 'react-native-vector-icons/MaterialIcons';
 import StackNavigator from './components/navigation/StackNavigator';
+import {SocketContextProvider} from './components/SocketContext';
 
-import Device from './components/Device';
 function App() {
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -35,9 +35,11 @@ function App() {
   };
 
   return (
+    <SocketContextProvider>
+      <StackNavigator />
+    </SocketContextProvider>
 
-     <StackNavigator/>
-//  <Device/>
+    //  <Device/>
   );
 }
 
@@ -45,7 +47,7 @@ const styles = StyleSheet.create({
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,
-  }
+  },
 });
 
 export default App;

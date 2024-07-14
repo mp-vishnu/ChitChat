@@ -7,13 +7,24 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
 
-import {selectLoggedInUser, selectUserId} from '../../redux/auth/authSlice';
+import {
+  selectLoggedInUser,
+  selectUserId,
+  getRequestAsync,
+  selectRequests,
+  acceptRequestAsync,
+  getAllFriendsAsync,
+  selectFriends,
+} from '../../redux/auth/authSlice';
+import Chat from '../Chat';
 import LogoutButton from '../LogoutButton';
 import {SafeAreaView} from 'react-native-safe-area-context';
+
 const ChatScreen = () => {
+  const dispatch = useDispatch();
   const [options, setOptions] = useState(['Chats']);
-  const [chats, setChats] = useState([]);
-  const [requests, setRequests] = useState([]);
+  const chats = useSelector(selectFriends);
+  const requests = useSelector(selectRequests);
   const token = useSelector(selectLoggedInUser);
   const userId = useSelector(selectUserId);
   const chooseOption = option => {
@@ -24,18 +35,25 @@ const ChatScreen = () => {
     }
   };
   const navigation = useNavigation();
-  const logout = () => {
-    clearAuthToken();
+
+  const acceptRequest = requestId => {
+    const reqInfo = {
+      userId: userId,
+      requestId: requestId,
+    };
+    dispatch(acceptRequestAsync(reqInfo));
   };
-  const clearAuthToken = async () => {
-    try {
-      await AsyncStorage.removeItem('authToken');
-      setToken('');
-      navigation.replace('Login');
-    } catch (error) {
-      console.log('Error', error);
+  useEffect(() => {
+    if (userId) {
+      dispatch(getRequestAsync(userId));
     }
-  };
+  }, [userId, dispatch]);
+
+  useEffect(() => {
+    if (userId) {
+      dispatch(getAllFriendsAsync(userId));
+    }
+  }, [userId, dispatch]);
 
   return (
     // <View>
@@ -125,6 +143,64 @@ const ChatScreen = () => {
           </View>
           <Entypo name="chevron-small-down" size={26} color="black" />
         </Pressable>
+
+        <View style={{marginVertical: 12}}>
+          {options?.includes('Requests') && (
+            <View>
+              <Text style={{fontSize: 15, fontWeight: '500'}}>
+                Checkout all the requests
+              </Text>
+
+              {requests?.map((item, index) => (
+                <Pressable style={{marginVertical: 12}}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      alignItems: 'center',
+                      gap: 10,
+                    }}>
+                    <Pressable>
+                      <Image
+                        source={{uri: item?.from?.image}}
+                        style={{width: 40, height: 40, borderRadius: 20}}
+                      />
+                    </Pressable>
+
+                    <View style={{flex: 1}}>
+                      <Text style={{fontSize: 15, fontWeight: '500'}}>
+                        {item?.from?.name}
+                      </Text>
+
+                      <Text style={{marginTop: 4, color: 'gray'}}>
+                        {item?.message}
+                      </Text>
+                    </View>
+
+                    <Pressable
+                      onPress={() => acceptRequest(item?.from?._id)}
+                      style={{
+                        padding: 8,
+                        backgroundColor: '#005187',
+                        width: 75,
+                        borderRadius: 5,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 13,
+                          textAlign: 'center',
+                          color: 'white',
+                        }}>
+                        Accept
+                      </Text>
+                    </Pressable>
+
+                    <AntDesign name="delete" size={26} color="red" />
+                  </View>
+                </Pressable>
+              ))}
+            </View>
+          )}
+        </View>
       </View>
     </SafeAreaView>
   );

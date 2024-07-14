@@ -12,6 +12,8 @@ import RegisterScreen from '../screens/RegisterScreen';
 import PeopleScreen from '../screens/PeopleScreen';
 import RequestChatRoom from '../screens/RequestChatRoom';
 
+import ChatRoom from '../screens/ChatRoom';
+
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 
@@ -20,6 +22,7 @@ function BottomTabs() {
     <Tab.Navigator>
       <Tab.Screen
         name="Chats"
+        // component={withSocket(ChatScreen)}
         component={ChatScreen}
         options={{
           tabBarStyle: {backgroundColor: '#101010'},
@@ -35,6 +38,7 @@ function BottomTabs() {
       />
       <Tab.Screen
         name="Profile"
+        // component={withSocket(ProfileScreen)}
         component={ProfileScreen}
         options={{
           tabBarStyle: {backgroundColor: '#101010'},
@@ -79,10 +83,13 @@ function MainStack() {
       />
       <Stack.Screen
         name="People"
+        // component={withSocket(PeopleScreen)}
         component={PeopleScreen}
         options={{headerShown: false}}
       />
       <Stack.Screen name="Request" component={RequestChatRoom} />
+      {/* <Stack.Screen name="ChatRoom" component={withSocket(ChatRoom)} /> */}
+      <Stack.Screen name="ChatRoom" component={ChatRoom} />
     </Stack.Navigator>
   );
 }

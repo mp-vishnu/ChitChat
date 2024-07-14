@@ -6,6 +6,7 @@ import {
   TextInput,
   Pressable,
   ScrollView,
+  Alert,
 } from 'react-native';
 import React, {useLayoutEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
@@ -14,6 +15,7 @@ import {
   selectLoggedInUser,
   sendRequestAsync,
   resetReqStatus,
+  selectReqStatus,
 } from '../../redux/auth/authSlice';
 import {useDispatch, useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -27,6 +29,7 @@ const RequestChatRoom = () => {
   const userId = useSelector(selectUserId);
   const [message, setMessage] = useState('');
   const route = useRoute();
+  const dispatch = useDispatch();
   useLayoutEffect(() => {
     return navigation.setOptions({
       headerTitle: '',
@@ -50,6 +53,10 @@ const RequestChatRoom = () => {
     };
 
     dispatch(sendRequestAsync(userData));
+    Alert.alert(
+      'Your request has been shared',
+      'wait for the user to accept your request',
+    );
     const reqstatus = useSelector(selectReqStatus);
     if (reqstatus === 1) {
       dispatch(resetReqStatus());
