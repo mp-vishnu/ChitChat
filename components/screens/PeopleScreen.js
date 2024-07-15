@@ -19,13 +19,18 @@ const PeopleScreen = () => {
     }
   }, [dispatch, userId]);
 
-  const renderItem = ({item}) => <User item={item} />;
+  const renderItem = ({item}) => {
+    const hasRequestFromUser = item.requests.some(
+      request => request.from === userId,
+    );
+    return !hasRequestFromUser ? <User item={item} /> : null;
+  };
 
   const keyExtractor = item => item._id.toString();
 
   return (
     <SafeAreaView style={styles.container}>
-      <Text style={styles.headerText}>... people using chitchat ...</Text>
+      {/* <Text style={styles.headerText}>... people using chitchat ...</Text> */}
       <FlatList
         data={users}
         renderItem={renderItem}

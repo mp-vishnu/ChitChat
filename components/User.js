@@ -1,10 +1,41 @@
-import React from 'react';
-import {StyleSheet, View, Text, Image, Pressable} from 'react-native';
+import React, {useState} from 'react';
+import {StyleSheet, View, Text, Image, Pressable, Alert} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  selectUserId,
+  selectUserName,
+  sendRequestAsync,
+  resetReqStatus,
+} from '../redux/auth/authSlice';
 
 const User = ({item}) => {
+  const userId = useSelector(selectUserId);
+  const name = useSelector(selectUserName);
+  const [flag, setFlag] = useState(0);
+  const dispatch = useDispatch();
   const navigation = useNavigation();
+  const sendRequest = async () => {
+    const userData = {
+      senderId: userId,
+      receiverId: item._id,
+      message: `Request from ${name}`,
+    };
 
+    dispatch(sendRequestAsync(userData));
+    Alert.alert(
+      'Your request has been shared',
+      'Wait for the user to accept your request',
+    );
+    const reqstatus = useSelector(selectReqStatus);
+    if (reqstatus === 1) {
+      dispatch(resetReqStatus());
+      Alert.alert(
+        'Your request has been shared',
+        'Wait for the user to accept your request',
+      );
+    }
+  };
   return (
     <View style={styles.container}>
       <View style={styles.userInfo}>
@@ -16,19 +47,16 @@ const User = ({item}) => {
           <Text style={styles.email}>{item?.email}</Text>
         </View>
         <Pressable
-          onPress={() =>
-            navigation.navigate('Request', {
-              name: item?.name,
-              receiverId: item?._id,
-            })
-          }
+          onPress={sendRequest}
           style={{
             padding: 10,
             width: 80,
             backgroundColor: '#005187',
             borderRadius: 4,
           }}>
-          <Text style={{textAlign: 'center', color: 'white'}}>Chat</Text>
+          <Text style={{textAlign: 'center', color: 'white'}}>
+            Send Request
+          </Text>
         </Pressable>
       </View>
     </View>
@@ -38,7 +66,7 @@ const User = ({item}) => {
 const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop: 20,
+    marginTop: 0,
     backgroundColor: '#e9ecf2',
   },
   userInfo: {

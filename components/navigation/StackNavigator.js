@@ -83,10 +83,15 @@ function MainStack() {
       />
       <Stack.Screen
         name="People"
-        // component={withSocket(PeopleScreen)}
         component={PeopleScreen}
-        options={{headerShown: false}}
+        options={{
+          headerShown: true,
+          headerBackTitleVisible: false, // Hide the previous screen name
+          headerBackTitle: ' ', // Set an empty string or space to clear the previous screen name space
+          headerTintColor: 'black', // Set back arrow color to black
+        }}
       />
+
       <Stack.Screen name="Request" component={RequestChatRoom} />
       {/* <Stack.Screen name="ChatRoom" component={withSocket(ChatRoom)} /> */}
       <Stack.Screen name="ChatRoom" component={ChatRoom} />

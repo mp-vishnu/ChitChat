@@ -17,6 +17,7 @@ import {
 // import 'core-js/stable/atob';
 const initialState = {
   loggedInUserToken: null,
+  name: '',
   userId: null,
   users: [],
   status: 'idle',
@@ -181,6 +182,7 @@ const userSlice = createSlice({
         state.status = 'success';
         state.loggedInUserToken = action.payload.authtoken;
         state.userId = action.payload.id;
+        state.name = action.payload.name;
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.status = 'idle';
@@ -245,6 +247,7 @@ const userSlice = createSlice({
 });
 
 export const selectLoggedInUser = state => state.auth.loggedInUserToken;
+export const selectUserName = state => state.auth.name;
 export const selectUserId = state => state.auth.userId;
 export const selectError = state => state.auth.error;
 export const selectAllUsers = state => state.auth.users;

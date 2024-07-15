@@ -6,6 +6,8 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Entypo from 'react-native-vector-icons/Entypo';
 import {useNavigation} from '@react-navigation/native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {logout} from '../../redux/auth/authSlice';
 
 import {
   selectLoggedInUser,
@@ -22,6 +24,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 
 const ChatScreen = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [options, setOptions] = useState(['Chats']);
   const chats = useSelector(selectFriends);
   const requests = useSelector(selectRequests);
@@ -34,7 +37,6 @@ const ChatScreen = () => {
       setOptions([...options, option]);
     }
   };
-  const navigation = useNavigation();
 
   const acceptRequest = requestId => {
     const reqInfo = {
@@ -55,6 +57,10 @@ const ChatScreen = () => {
     }
   }, [userId, dispatch]);
 
+  const handleLogout = () => {
+    dispatch(logout());
+    navigation.replace('AuthStack');
+  };
   return (
     // <View>
     //   <Text>ChatScreen hello helooo{token }</Text>
@@ -73,7 +79,7 @@ const ChatScreen = () => {
           <Image
             style={{width: 30, height: 30, borderRadius: 15}}
             source={{
-              uri: 'https://lh3.googleusercontent.com/ogw/AF2bZyi09EC0vkA0pKVqrtBq0Y-SLxZc0ynGmNrVKjvV66i3Yg=s64-c-mo',
+              uri: 'https://signal.org/assets/images/features/Media.png',
             }}
           />
         </Pressable>
@@ -82,11 +88,18 @@ const ChatScreen = () => {
 
         <View>
           <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
-            <AntDesign name="camerao" size={26} color="black" />
+            {/* <AntDesign name="camerao" size={26} color="black" /> */}
+
             <MaterialIcons
               onPress={() => navigation.navigate('People')}
               name="person-outline"
               size={26}
+              color="black"
+            />
+            <Ionicons
+              onPress={handleLogout}
+              name="log-out-outline"
+              size={30}
               color="black"
             />
           </View>

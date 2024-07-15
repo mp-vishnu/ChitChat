@@ -1,3 +1,4 @@
+import React, {useState, useEffect} from 'react';
 import {
   StyleSheet,
   Text,
@@ -8,8 +9,14 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import React, {useLayoutEffect, useState} from 'react';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector, useDispatch} from 'react-redux';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Entypo from 'react-native-vector-icons/Entypo';
+import Feather from 'react-native-vector-icons/Feather';
+import {useNavigation, useRoute} from '@react-navigation/native';
+import LogoutButton from '../LogoutButton';
+
 import {
   selectUserId,
   selectLoggedInUser,
@@ -17,12 +24,7 @@ import {
   resetReqStatus,
   selectReqStatus,
 } from '../../redux/auth/authSlice';
-import {useDispatch, useSelector} from 'react-redux';
-import Ionicons from 'react-native-vector-icons/Ionicons';
-import Entypo from 'react-native-vector-icons/Entypo';
-import Feather from 'react-native-vector-icons/Feather';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import LogoutButton from '../LogoutButton';
+
 const RequestChatRoom = () => {
   const navigation = useNavigation();
   const token = useSelector(selectLoggedInUser);
@@ -30,21 +32,21 @@ const RequestChatRoom = () => {
   const [message, setMessage] = useState('');
   const route = useRoute();
   const dispatch = useDispatch();
-  useLayoutEffect(() => {
-    return navigation.setOptions({
+
+  useEffect(() => {
+    navigation.setOptions({
       headerTitle: '',
       headerLeft: () => (
-        <View style={{flexDirection: 'row', alignItems: 'center', gap: 10}}>
+        <Pressable
+          onPress={() => navigation.navigate('People')}
+          style={{flexDirection: 'row', alignItems: 'center'}}>
           <Ionicons name="arrow-back" size={24} color="black" />
-          <View>
-            <Text>{route?.params?.name}</Text>
-          </View>
-        </View>
+          <Text style={{marginLeft: 10}}>{route?.params?.name}</Text>
+        </Pressable>
       ),
     });
-  }, []);
+  }, [navigation]);
 
-  console.log('Rec', route?.params.receiverId);
   const sendMessage = async () => {
     const userData = {
       senderId: userId,
@@ -55,7 +57,7 @@ const RequestChatRoom = () => {
     dispatch(sendRequestAsync(userData));
     Alert.alert(
       'Your request has been shared',
-      'wait for the user to accept your request',
+      'Wait for the user to accept your request',
     );
     const reqstatus = useSelector(selectReqStatus);
     if (reqstatus === 1) {
@@ -63,7 +65,7 @@ const RequestChatRoom = () => {
       setMessage('');
       Alert.alert(
         'Your request has been shared',
-        'wait for the user to accept your request',
+        'Wait for the user to accept your request',
       );
     }
   };
@@ -86,14 +88,14 @@ const RequestChatRoom = () => {
         <Entypo name="emoji-happy" size={24} color="gray" />
 
         <TextInput
-          placeholder="type your message..."
+          placeholder="Type your message..."
           value={message}
           onChangeText={setMessage}
           style={{
             flex: 1,
             height: 40,
             borderWidth: 1,
-            borderColor: '#ddddd',
+            borderColor: '#dddddd',
             borderRadius: 20,
             paddingHorizontal: 10,
             marginLeft: 10,

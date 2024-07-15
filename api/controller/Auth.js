@@ -6,7 +6,9 @@ exports.basicConnection = (req, res) => {
   res.status(200).json({message: 'Connection successful'});
 };
 exports.createUser = async (req, res) => {
-  const {name, email, password, image} = req.body;
+  const {name, email, password} = req.body;
+  const image =
+    'https://images.unsplash.com/photo-1511367461989-f85a21fda167?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8cHJvZmlsZXxlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80';
 
   const newUser = new User({name, email, password, image});
   console.log('newuser <><><> ', newUser);
@@ -38,7 +40,7 @@ exports.loginUser = async (req, res) => {
     const secretKey = crypto.randomBytes(32).toString('hex');
 
     const token = jwt.sign({userId: user._id}, secretKey);
-    res.status(200).json({authtoken: token, id: user._id});
+    res.status(200).json({authtoken: token, id: user._id, name: user.name});
   } catch (error) {
     console.log('Error logging in', error);
     res.status(500).json({message: 'Error logging in'});
